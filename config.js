@@ -33,6 +33,21 @@ if (existsSync(ROOT_ENV_FILE) && typeof process.loadEnvFile === "function") {
   }
 }
 
+// App-level proxy (like starter-ai): prefer APP_HTTPS_PROXY / APP_HTTP_PROXY so only this app uses the proxy.
+// Node 24+ fetch respects HTTP_PROXY/HTTPS_PROXY when NODE_USE_ENV_PROXY is set.
+const appHttpsProxy = process.env.APP_HTTPS_PROXY?.trim() || "";
+const appHttpProxy = process.env.APP_HTTP_PROXY?.trim() || "";
+if (appHttpsProxy || appHttpProxy) {
+  const proxyUrl = appHttpsProxy || appHttpProxy;
+  process.env.HTTPS_PROXY = process.env.HTTPS_PROXY || proxyUrl;
+  process.env.HTTP_PROXY = process.env.HTTP_PROXY || proxyUrl;
+  process.env.NODE_USE_ENV_PROXY = "1";
+  if (process.env.APP_NO_PROXY?.trim()) {
+    process.env.NO_PROXY = process.env.NO_PROXY || process.env.APP_NO_PROXY.trim();
+  }
+}
+
+
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY?.trim() ?? "";
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY?.trim() ?? "";
 const requestedProvider = process.env.AI_PROVIDER?.trim().toLowerCase() ?? "";

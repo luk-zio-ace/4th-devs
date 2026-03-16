@@ -6,7 +6,9 @@ import {
 } from "../config.js";
 import { extractResponseText } from "./helpers.js";
 
-const MODEL = resolveModelForProvider("gpt-5.4");
+//const MODEL = resolveModelForProvider("gpt-5.4");
+
+const MODEL = resolveModelForProvider("openrouter/free");
 
 async function extractPerson(text) {
   const response = await fetch(RESPONSES_API_ENDPOINT, {
